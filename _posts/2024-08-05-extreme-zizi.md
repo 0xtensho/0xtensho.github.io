@@ -2,13 +2,14 @@
 title: Extreme Zizi
 date: 2020-07-31 11:58:00 +0000
 categories: [CTF, TryHackMe]
-tags: [zizi,extreme,pipi,caca]     # TAG names should always be lowercase
+tags: [zizi,extreme,pipi,caca]
+image: assets/img/tryhackme.png
 ---
 
 > This is my first write up ever, which was made back in 2020. It's not the best quality but I like it.
 {: .prompt-info }
 
-# My first article2
+# My first article
 ```terminal
 userland@localhost:~$ ssh-keygen
 Generating public/private rsa key pair.
