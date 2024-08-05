@@ -12,4 +12,4 @@ I've been enjoying cybersecurity for a long time, I'm a big fan of TryHackMe and
 
 [![image](https://tryhackme-badges.s3.amazonaws.com/Tensho.png)](https://tryhackme.com/p/Tensho)
 
-[![image](https://www.hackthebox.com/badge/image/185448)](https://www.hackthebox.com/profile/185448)
+[![image](https://www.hackthebox.com/badge/image/185448)](https://app.hackthebox.com/profile/185448)
