@@ -6,10 +6,10 @@ tags: [zizi,extreme,pipi,caca]     # TAG names should always be lowercase
 ---
 
 > This is my first write up ever, which was made back in 2020. It's not the best quality but I like it.
-{: .prompt-tip }
+{: .prompt-info }
 
 # My first article
-```shell
+```console
 userland@localhost:~$ ssh-keygen
 Generating public/private rsa key pair.
 Enter file in which to save the key (/home/userland/.ssh/id_rsa):
