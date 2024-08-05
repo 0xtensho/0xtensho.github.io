@@ -1,8 +1,9 @@
 ---
-title: Extreme Zizi
+title: Smag WriteUp
+description: This is my solution for the TryHackMe room 'Smag'
 date: 2020-07-31 11:58:00 +0000
 categories: [CTF, TryHackMe]
-tags: [zizi,extreme,pipi,caca]
+tags: [writeup, beginner, nmap, enumeration, privesc, web, rce]
 image: assets/img/tryhackme.png
 ---
 
