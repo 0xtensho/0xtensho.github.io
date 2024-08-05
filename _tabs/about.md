@@ -4,5 +4,10 @@ icon: fas fa-info-circle
 order: 4
 ---
 
-> Add Markdown syntax content to file `_tabs/about.md`{: .filepath } and it will show up on this page.
-{: .prompt-tip }
+# ./Whoami
+I'm a computer science student, currently studying at the [INSA Rennes](https://insa-rennes.fr)  engineering school.
+
+# Skills
+I've been enjoying cybersecurity for a long time, I'm a big fan of TryHackMe and HackTheBox. I have some programing knowledge, mainly in Python, Java and C. At the moment I'm really interested in mobile cybersecurity.
+
+![https://app.hackthebox.com/profile/185448]
