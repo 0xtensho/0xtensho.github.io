@@ -20,14 +20,7 @@ Now I only had to create my shellcode loader :)
 ## VirtualAlloc ?
 I decided that I wanted to create my own shellcode loader, which I did using visual studio 2022. I first used VirtualAlloc like absolutely every shellcode loader does on this planet. It's really straightforward, all you do is create executable memory, put your shellcode inside, and jump to it. I wanted to get more creative so I searched for more unique ways and I found a really funny one, vector excpetions. What I mean by funny is that the code that triggers the shellcode is the following :
 
-```bash
-if [ $? -ne 0 ]; then
-  echo "The command was not successful.";
-  #do the needful / exit
-fi;
-```
-
-```C
+```c
 	int a = 1;
 	int b = 0;
 	int result = a / b;
@@ -37,7 +30,7 @@ Yes, it's the actual code in my shellcode loader ^^.
 I know I know it sounds confusing at first, but don't worry it will all come together.
 When your program reaches this, it will raise an exception and will iterate through a list of "vectored exception handlers", which is a fancy word for functions that will be called, one after the other before one of them can solve the exception. All we need to do is create an ExceptionHandler and register it so it will be called when an error occurs. I could go on and explain step by step but this snippet will explain it better than I :
 
-```C
+```c
 LONG WINAPI ExceptionHandler(PEXCEPTION_POINTERS pExceptionInfo) {
 	// Check if it's a divide by zero exception
 	if (pExceptionInfo->ExceptionRecord->ExceptionCode == EXCEPTION_INT_DIVIDE_BY_ZERO) {
@@ -70,7 +63,7 @@ I could've done this with other types of exceptions but triggering a shellcode w
 
 If you paid attention you realise that we need to register our ExceptionHandler, which is done like this :
 
-```C
+```c
 	if (AddVectoredExceptionHandler(1, ExceptionHandler) == NULL) {
 		printf("[X] Couldn't add an Exception Handler sadly\n");
 		return;
