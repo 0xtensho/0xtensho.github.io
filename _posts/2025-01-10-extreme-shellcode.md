@@ -2,14 +2,11 @@
 title: 1/0 = reverse shell ??
 description: Deep dive into a unique shellcode loading technique
 date: 2025-01-10 12:00:00 +0000
-categories:
-  - Windows
-  - Programming
-tags:
-  - Windows
-  - Shellcode
+categories: [Windows,Programming]
+tags: [Windows,Shellcode]
 image: assets/img/visual_studio.png
 ---
+
 In this blog post I'll explain how to load your shellcode using a really neat technique abusing VectorExceptions, a windows way of catching exceptions.
 
 ## Context
