@@ -1,7 +1,7 @@
 ---
 title: 1/0 = reverse shell ??
 description: Deep dive into a unique shellcode loading technique
-date: 2025-01-10 17:24:00 +0000
+date: 2025-01-10 12:00:00 +0000
 categories:
   - Windows
   - Programming
