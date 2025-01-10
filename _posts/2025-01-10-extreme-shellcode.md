@@ -20,6 +20,13 @@ Now I only had to create my shellcode loader :)
 ## VirtualAlloc ?
 I decided that I wanted to create my own shellcode loader, which I did using visual studio 2022. I first used VirtualAlloc like absolutely every shellcode loader does on this planet. It's really straightforward, all you do is create executable memory, put your shellcode inside, and jump to it. I wanted to get more creative so I searched for more unique ways and I found a really funny one, vector excpetions. What I mean by funny is that the code that triggers the shellcode is the following :
 
+```bash
+if [ $? -ne 0 ]; then
+  echo "The command was not successful.";
+  #do the needful / exit
+fi;
+```
+
 ```C
 	int a = 1;
 	int b = 0;
