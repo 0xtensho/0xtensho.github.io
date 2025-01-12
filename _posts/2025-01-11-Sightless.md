@@ -196,13 +196,21 @@ michael@sightless:~$ curl http://127.0.0.1:38983/json
 ```
 Ports 46013 and 37871 returned some strange stuff, however 38983 returned the expected json ! We can interact with this chrome session by many different ways, one of which is the chrome developper tools. To find out what I could do with this remote debugging chrome browser that john runs, I used a lot of google and found [this tutorial](https://developer.chrome.com/docs/devtools/remote-debugging/local-server). 
 I can actually have access to his browser in real time ! A lot of steps are incoming, so don't worry if it's not quite clear I'll sum it up at the end.
-I'll install chrome on my machine first. Then, I need to be able to access the port 37871, which for now is only accessible from the machine sightless.htb. To get access to it, I'll use ssh to forward the port :
+I'll install chrome on my machine first. Then, I need to be able to access the port 37871, which for now is only accessible from the machine sightless.htb. 
+
+To get access to it, I'll use ssh to forward the port :
 `ssh -L 7070:127.0.0.1:38983 michael@sightless.htb`
-Now, the port 38983 of the box, listening only on 127.0.0.1, is accessible through the port 7070 of my machine ;) I'll follow the previously linked tutorial and add a new target in chrome://inspect/#devices :
+Now, the port 38983 of the box, listening only on 127.0.0.1, is accessible through the port 7070 of my machine ;)
+
+I'll follow the previously linked tutorial and add a new target in chrome://inspect/#devices :
 ![chrom_add_config.png](/assets/img/sightless/chrom_add_config.png)
+
 Then, a new target appears, meaning that it worked :
 ![connect_chrome.png](/assets/img/sightless/connect_chrome.png)
-When clicking on inspect, I get a live view of john's browser !! ![john_login.gif](/assets/img/sightless/john_login.gif)
+When clicking on inspect, I get a live view of john's browser !! 
+![john_login.gif](/assets/img/sightless/john_login.gif)
+
+
 He is connecting to a froxlor instance, typing his username and password, then logs out after a few seconds. I absolutely love it, I've never seen something like that in a ctf. 
 So going back to exploitation, since he is typing his password we can actually intercept it, in the inspect pane there is a network tab. I'll log the login request, and stop the recording to check what was sent :
 ![intercept.gif](/assets/img/sightless/intercept.gif)
@@ -232,7 +240,8 @@ lftp web1@sightless.htb:/> get goaccess/backup/Database.kdb
 5292 bytes transferred
 ```
 It works ! we can download the Database.kdb backup file. 
-I can try to open it using a keepass file viewer, like keepassxc, but it requires a password. I'll try to brute force it using johntheripper :
+I can try to open it using a keepass file viewer, like keepassxc, but it requires a password. 
+I'll try to brute force it using johntheripper :
 ```terminal
 ┌──(samsam㉿pika-pika)-[~/htb/sightless]
 └─$ keepass2john Database.kdb > keepass_hash
@@ -255,7 +264,8 @@ Session completed.
 The password is bulldogs. This is getting quite long for an easy box, but hey we are almost done !
 I'll import it in `keepassxc`, making sure to use import file, because this is a .kdb file meaning it's using KeePass 1.X :
 ![keepass_import.png](/assets/img/sightless/keepass_import.png)
-The database only has one entry, Username : root Password : q6gnLTB74L132TMdFCpK However it doesn't work on ssh nor when I `su root`. And `id_rsa` file is attached, and I can save it !
+The database only has one entry, Username : root Password : q6gnLTB74L132TMdFCpK However it doesn't work on ssh nor when I `su root`. 
+An `id_rsa` file is attached, and I can save it !
 ![keepass_attachment.png](/assets/img/sightless/keepass_attachment.png)
 ```terminal
 ┌──(samsam㉿pika-pika)-[~/htb/sightless]
@@ -271,7 +281,10 @@ If we look closely at the id_rsa file, using xxd :
 00000d50: 5353 4820 5052 4956 4154 4520 4b45 592d  SSH PRIVATE KEY-
 00000d60: 2d2d 2d2d                                ----
 ```
-It's highlighted in my terminal, here it's not, but the bytes `0d 0a` (the second and third bytes , right after the 3d) here are relevant because they are the newline characters in Windows file formats. However in linux it's not the case, we only use `0a`, which is `\n`. We need to strip all `0d` bytes from this file. This can be done using the tool `dos2unix`. We also notice that the id_rsa file is missing an `\n` in the end, which we'll need to add to fix the format.
+It's highlighted in my terminal, here it's not, but the bytes `0d 0a` (the second and third bytes , right after the 3d) here are relevant because they are the newline characters in Windows file formats. 
+However in linux it's not the case, we only use `0a`, which is `\n`. 
+We need to strip all `0d` bytes from this file. This can be done using the tool `dos2unix`.
+We also notice that the id_rsa file is missing an `\n` in the end, which we'll need to add to fix the format.
 ```terminal
 ┌──(samsam㉿pika-pika)-[~/htb/sightless]
 └─$ dos2unix id_rsa              
@@ -284,4 +297,6 @@ Last login: Sun Sep  8 12:21:57 2024 from 10.10.14.201
 root@sightless:~# cat root.txt
 6634430c7157e4c226f3841debe7e655
 ```
-This last steps of the box were not beginner friendly as it required some really specific knowledge in the id_rsa file format and the discrepancies between windows and linux. 
+This last steps of the box were not beginner friendly as it required some really specific knowledge in the id_rsa file format and the discrepancies between windows and linux.
+This chrome debug privesc was actually unintended and that makes it even cooler ^^.
+The intended path used xss in log poisoning, the full intended path is available [here](https://0xdf.gitlab.io/2025/01/11/htb-sightless.html)
