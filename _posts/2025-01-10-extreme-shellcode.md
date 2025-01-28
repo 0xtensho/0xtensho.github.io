@@ -64,10 +64,10 @@ I could've done this with other types of exceptions but triggering a shellcode w
 If you paid attention you realise that we need to register our ExceptionHandler, which is done like this :
 
 ```c
-	if (AddVectoredExceptionHandler(1, ExceptionHandler) == NULL) {
-		printf("[X] Couldn't add an Exception Handler sadly\n");
-		return;
-	}
+if (AddVectoredExceptionHandler(1, ExceptionHandler) == NULL) {
+	printf("[X] Couldn't add an Exception Handler sadly\n");
+	return;
+}
 ```
 
 Reading the [docs](https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-addvectoredexceptionhandler), we see that the first argument just needs to be non zero so that our ExceptionHandler will be called first.
