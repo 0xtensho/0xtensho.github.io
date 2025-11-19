@@ -4,7 +4,7 @@ description: Find out how I rooted the box sightless from HackTheBox !
 published: 2025-01-11
 tags: [Linux,Easy,Web,HackTheBox,SqlPad,Chrome]
 coverImage:
-  src: '../rustykey-htb/hackthebox.png'
+  src: '/public/images/sightless/hackthebox.png'
   alt: 'HackTheBox cover'
 ---
 
@@ -72,12 +72,12 @@ We'll need to come back whenever we have credentials for this service.
 
 ## Web
 Port 80 is open, and as nmap said is delivering web content. Accessing it returns a redirect to `sightless.htb`. After adding it to my `/etc/hosts` file, let's access it with firefox :
-![web.png](./web.png)
+![web.png](/images/sightless/web.png)
 It's a really simple web page, none of the buttons work. I could try to bruteforce directories but this is not the way here. There's a link at the bottom mentionning a subdomain, `sqlpad.sightless.htb`.
 
 ## sqlpad.sightless.htb
 Going to sqlpad.sightless.htb gives us access to a simple sqlpad interface : 
-![sqlpad.png](./sqlpad.png)
+![sqlpad.png](/images/sightless/sqlpad.png)
 This is the right time to keep in mind that this is an easy box. Where on an insane/hard, we would probably have to understand a lot about how sqlpad works, this is not the case here. In fact we are on google search away from getting a shell. The website displays `sqlpad version 6.10.0`. Googling sqlpad exploit leads to [this post](https://huntr.com/bounties/46630727-d923-4444-a421-537ecd63e7fb), which describes a vulnerability affecting all sqlpad instance for versions prior to 6.10.1. The payload is the following :
 {% raw %}
 ```python
@@ -92,7 +92,7 @@ To get a shell from it, I'll use the standard bash reverse shell, and base64 enc
 ```
 {% endraw %}
 Now I follow the blog post describing the exploit, I create a new connection using the MySQL driver, and put my payload as the database :
-![editconnectionsqlpad.png](./editconnectionsqlpad.png)
+![editconnectionsqlpad.png](/images/sightless/editconnectionsqlpad.png)
 When I click on save, I do get a shell on my nc listener :
 ```shell title="zsh"
 ┌──(samsam㉿pika-pika)-[~/htb/sightless]
@@ -204,17 +204,17 @@ To get access to it, I'll use ssh to forward the port :
 Now, the port 38983 of the box, listening only on 127.0.0.1, is accessible through the port 7070 of my machine ;)
 
 I'll follow the previously linked tutorial and add a new target in chrome://inspect/#devices :
-![chrom_add_config.png](./chrom_add_config.png)
+![chrom_add_config.png](/images/sightless/chrom_add_config.png)
 
 Then, a new target appears, meaning that it worked :
-![connect_chrome.png](./connect_chrome.png)
+![connect_chrome.png](/images/sightless/connect_chrome.png)
 When clicking on inspect, I get a live view of john's browser !! 
-![john_login.gif](./john_login.gif)
+![john_login.gif](/images/sightless/john_login.gif)
 
 
 He is connecting to a froxlor instance, typing his username and password, then logs out after a few seconds. I absolutely love it, I've never seen something like that in a ctf. 
 So going back to exploitation, since he is typing his password we can actually intercept it, in the inspect pane there is a network tab. I'll log the login request, and stop the recording to check what was sent :
-![intercept.gif](./intercept.gif)
+![intercept.gif](/images/sightless/intercept.gif)
 And we have the admin password,`ForlorfroxAdmin` for the webapp Froxlor ! 
 
 To sum up what we have done :
@@ -226,7 +226,7 @@ John was accessing admin.sightless.htb:8080, which matches what we saw earlier w
 `ssh -L 7070:127.0.0.1:8080 michael@sightless.htb`
 Now if I open firefox and type in 127.0.0.1:7070 I'll have access to the froxlor instance running on port 8080 of sightless.htb. I now have the credentials and can log in the webapp. 
 After digging around for a bit, in `Resources -> Domains` theres a new domain, `web1.sightless.htb`. Interestingly, clicking on the web1 username opens the admin pannel of that customer. The FTP tab on the left allows me to reset the ftp password !
-![ftpreset.png](./ftpreset.png)
+![ftpreset.png](/images/sightless/ftpreset.png)
 I'll just copy paste the password suggestion, hit save, and try to connect to the ftp server :
 ```shell title="zsh"
 ┌──(samsam㉿pika-pika)-[~/htb/sightless]
@@ -265,10 +265,10 @@ Session completed.
 ```
 The password is bulldogs. This is getting quite long for an easy box, but hey we are almost done !
 I'll import it in `keepassxc`, making sure to use import file, because this is a .kdb file meaning it's using KeePass 1.X :
-![keepass_import.png](./keepass_import.png)
+![keepass_import.png](/images/sightless/keepass_import.png)
 The database only has one entry, Username : root Password : q6gnLTB74L132TMdFCpK However it doesn't work on ssh nor when I `su root`. 
 An `id_rsa` file is attached, and I can save it !
-![keepass_attachment.png](./keepass_attachment.png)
+![keepass_attachment.png](/images/sightless/keepass_attachment.png)
 ```shell title="zsh"
 ┌──(samsam㉿pika-pika)-[~/htb/sightless]
 └─$ ssh root@sightless.htb -i id_rsa         

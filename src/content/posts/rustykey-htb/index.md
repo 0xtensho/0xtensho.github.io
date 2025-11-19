@@ -4,7 +4,7 @@ description: Let's pwn this hard active directory machine on HackTheBox !
 published: 2025-10-11
 tags: [Windows,Hard,AD,HackTheBox]
 coverImage: 
-    src: './hackthebox.png'
+    src: '/public/images/rustykey/hackthebox.png'
     alt: 'Htb cover'
 ---
 
@@ -151,9 +151,9 @@ Looking at bloodhound with the data collected earlier, we see that `IT-Computer3
 [+] it-computer3$ added to helpdesk
 ```
 
-![bloodhoundPicture](./bloodhoundHelpdesk.png)
+![bloodhoundPicture](/images/rustykey/bloodhoundHelpdesk.png)
 HELPDESK is really interesting as it's a non default one and has `ForceChangePassword` over several users. Furthermore, all of these users are part of the `REMOTE MANAGEMENT USERS` ( except dd.ali ). 
-![bloodhoundPicture](./bloodhoundWinrmUsers.png)
+![bloodhoundPicture](/images/rustykey/bloodhoundWinrmUsers.png)
 We can of course try to change the password of one of those users and try to winrm :
 ```shell title="zsh"
 ┌──(samsam㉿pika-pika)-[~/htb/rustykey]
@@ -202,7 +202,7 @@ As we saw earlier, `bb.morgan` is part of the `PROTECTED OBJECTS` group. Microso
 
 It does say that the protected account won't be able to authenticate using RC4. This is where it gets interesting, because as a member of the `HELPDESK` group, we can manage who is and who isn't in the `PROTECTED OBJECTS` group ! 
 bb.morgan is in this group because they are in the `IT` group which is in `PROTECTED OBJECTS`. 
-![bloodhoundPicture](./bloodhoundItProtected.png)
+![bloodhoundPicture](/images/rustykey/bloodhoundItProtected.png)
 We can remove the `IT` group from the `PROTECTED OBJECTS` group and we'll be able to authenticate !
 ```
 ┌──(samsam㉿pika-pika)-[~/htb/rustykey]
@@ -423,7 +423,7 @@ Yeaaaaah, progress !
 
 ## Domain admin
 From there, we'll go back to the bloodhound results to understand what mm.turner can do.
-![bloodhoundPicture](./bloodhoundmmturner.png)
+![bloodhoundPicture](/images/rustykey/bloodhoundmmturner.png)
 This definitely sounds juicy !
 It allows us to do a Resource Based Constrained Delegation, which will allow us to impersonate users of the domain. If you are unfamiliar with this kind of attack, this is greatly explained [here](https://www.thehacker.recipes/ad/movement/kerberos/delegations/rbcd), and in french (really good explanation) [here](https://beta.hackndo.com/resource-based-constrained-delegation-attack/).
 
