@@ -96,8 +96,8 @@ const config: SiteConfig = {
   socialLinks: {
     github: 'https://github.com/0xtensho',
     //mastodon: 'https://github.com/stelcodes/multiterm-astro',
-    email: 'mailto:samuel.gontard@gmail.com',
-    linkedin: 'https://github.com/stelcodes/multiterm-astro',
+    //email: 'mailto:samuel.gontard@gmail.com',
+    //linkedin: 'https://github.com/stelcodes/multiterm-astro',
     // bluesky: 'https://github.com/stelcodes/multiterm-astro',
     // twitter: 'https://github.com/stelcodes/multiterm-astro',
     // rss: true, // Set to true to include an RSS feed link in the footer
